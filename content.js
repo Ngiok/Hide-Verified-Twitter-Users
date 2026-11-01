@@ -16,6 +16,11 @@
   let isHiding = false;
   let blockedCount = 0;
   const status = new Map(); // lowercased handle -> "paid" | "other"
+  let whitelist = new Set(); // lowercased handles the user never wants hidden
+
+  function setWhitelist(list) {
+    whitelist = new Set(Array.isArray(list) ? list : []);
+  }
 
   const style = document.createElement("style");
   style.id = "hvu-style";
@@ -39,7 +44,8 @@
 
   function isPaid(article) {
     const handle = authorHandle(article);
-    return handle ? status.get(handle) === "paid" : false;
+    if (!handle || whitelist.has(handle)) return false;
+    return status.get(handle) === "paid";
   }
 
   // Promoted/ad posts. X wraps these in a placementTracking node; the advertiser
@@ -102,14 +108,15 @@
   observer.observe(document.documentElement, { childList: true, subtree: true });
 
   chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.isHiding) {
-      isHiding = !!changes.isHiding.newValue;
-      apply();
-    }
+    if (area !== "sync") return;
+    if (changes.isHiding) isHiding = !!changes.isHiding.newValue;
+    if (changes.whitelist) setWhitelist(changes.whitelist.newValue);
+    if (changes.isHiding || changes.whitelist) apply();
   });
 
-  chrome.storage.sync.get("isHiding", (storage) => {
+  chrome.storage.sync.get(["isHiding", "whitelist"], (storage) => {
     isHiding = !!storage.isHiding;
+    setWhitelist(storage.whitelist);
     apply();
   });
 })();

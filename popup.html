@@ -72,6 +72,99 @@
       .slider.round:before {
         border-radius: 50%;
       }
+      .whitelist {
+        border-top: 1px solid #eff3f4;
+        margin-top: 16px;
+        padding-top: 14px;
+      }
+      h2 {
+        font-size: 14px;
+        margin: 0 0 4px;
+      }
+      .whitelist p {
+        margin-bottom: 10px;
+      }
+      .add-row {
+        display: flex;
+        gap: 6px;
+      }
+      .add-row input {
+        border: 1px solid #cfd9de;
+        border-radius: 6px;
+        flex: 1;
+        font: inherit;
+        font-size: 13px;
+        min-width: 0;
+        padding: 6px 8px;
+      }
+      .add-row input:focus {
+        border-color: #1d9bf0;
+        outline: none;
+      }
+      .add-row button {
+        background: #1d9bf0;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        cursor: pointer;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 12px;
+      }
+      .add-row button:hover {
+        background: #1a8cd8;
+      }
+      .error {
+        color: #f4212e;
+        font-size: 12px;
+        min-height: 16px;
+        margin-top: 4px;
+      }
+      details {
+        font-size: 13px;
+        margin-top: 4px;
+      }
+      summary {
+        color: #536471;
+        cursor: pointer;
+        user-select: none;
+      }
+      #whitelistItems {
+        list-style: none;
+        margin: 8px 0 0;
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 0;
+      }
+      #whitelistItems li {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 2px;
+      }
+      #whitelistItems li + li {
+        border-top: 1px solid #eff3f4;
+      }
+      #whitelistItems .remove {
+        background: none;
+        border: none;
+        border-radius: 50%;
+        color: #536471;
+        cursor: pointer;
+        font-size: 14px;
+        height: 22px;
+        line-height: 1;
+        width: 22px;
+      }
+      #whitelistItems .remove:hover {
+        background: #fee8ea;
+        color: #f4212e;
+      }
+      #whitelistItems .empty {
+        color: #536471;
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
@@ -86,6 +179,20 @@
       </label>
     </div>
     <div class="count">Hidden on this page: <b id="count">0</b></div>
+
+    <div class="whitelist">
+      <h2>Whitelist</h2>
+      <p>Verified users in this list are never hidden.</p>
+      <form class="add-row" id="whitelistForm" autocomplete="off">
+        <input type="text" id="whitelistInput" placeholder="@username" maxlength="16" spellcheck="false" />
+        <button type="submit">Add</button>
+      </form>
+      <div class="error" id="whitelistError"></div>
+      <details>
+        <summary>Show list (<span id="whitelistCount">0</span>)</summary>
+        <ul id="whitelistItems"></ul>
+      </details>
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>

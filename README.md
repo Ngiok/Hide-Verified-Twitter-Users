@@ -20,12 +20,15 @@ Available on the [Chrome Web Store](https://chrome.google.com/webstore/detail/hi
 ### How to use
 
 1. Install the extension (or load it unpacked — see below).
-2. Click the toolbar icon and flip the **Hiding verified posts** switch.
+2. Click the toolbar icon and flip the **Hiding paid-verified posts** switch.
 3. Verified posts are hidden live as you browse. The popup shows how many are
    currently hidden on the page.
+4. To always show a specific verified user, type their `@username` in the
+   **Whitelist** field and press **Add** (or Enter). Open **Show list** to see
+   the current whitelist and click ✕ next to a username to remove it.
 
-The preference is stored in `chrome.storage.sync`, so it follows you across
-devices and applies to every open X / Twitter tab at once.
+The preferences (on/off switch and whitelist) are stored in `chrome.storage.sync`,
+so they follow you across devices and apply to every open X / Twitter tab at once.
 
 ### Load unpacked (for development)
 
@@ -41,7 +44,11 @@ devices and applies to every open X / Twitter tab at once.
   `paid` (blue, individual) vs. `other` (business/government/legacy). It posts a
   `handle -> status` map to the content script via `window.postMessage`.
 - `content.js` (isolated world) watches the page with a `MutationObserver`, reads
-  each post's author handle, and hides the post only if that handle is `paid`.
+  each post's author handle, and hides the post only if that handle is `paid`
+  and not in the whitelist. Promoted posts are hidden regardless of the whitelist.
+- The whitelist is an array of lowercased handles (without `@`) in
+  `chrome.storage.sync`, edited from the popup. Changes apply instantly to open
+  tabs, no reload needed.
 - The popup writes the on/off flag to `chrome.storage.sync`; the content script
   reacts to that change directly, so no background service worker is needed.
 - The live hidden count is written to `chrome.storage.local` and shown in the
@@ -57,4 +64,4 @@ as soon as its user data arrives (usually the same response that rendered it).
 | `manifest.json` | MV3 manifest, host permissions, content-script registration |
 | `inject.js` | MAIN-world API interceptor that classifies paid vs. other badges |
 | `content.js` | Hides paid-verified posts via `MutationObserver` |
-| `popup.html` / `popup.js` | Toggle UI and live hidden count |
+| `popup.html` / `popup.js` | Toggle UI, live hidden count and whitelist editor |
